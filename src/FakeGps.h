@@ -8,7 +8,7 @@ class FakeGps : public GpsInterface
 {
 	public:
         FakeGps();
-		GpsCoordinate* getPosition();
+		GpsCoordinate getPosition();
 };
 
 #endif

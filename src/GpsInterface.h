@@ -6,7 +6,7 @@
 class GpsInterface
 {
 	public:
-		virtual GpsCoordinate* getPosition() = 0;
+		virtual GpsCoordinate getPosition() = 0;
 };
 
 #endif

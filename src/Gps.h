@@ -10,7 +10,7 @@ class Gps : public GpsInterface
 {
     public:
         Gps(uint8_t rx, uint8_t tx);
-		GpsCoordinate* getPosition();
+		GpsCoordinate getPosition();
     private:
         TinyGPS gps;
 	    SoftwareSerial ss;

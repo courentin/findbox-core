@@ -2,7 +2,7 @@
 #define GPS_COORDINATE_H
 
 #include "Coordinate.h"
-//#include "String.h"
+#include "Arduino.h"
 
 class GpsCoordinate : public Coordinate
 {
@@ -11,9 +11,9 @@ class GpsCoordinate : public Coordinate
 		double precision;
 		double altitude;
 		double speed;
-		int date;
+		String date;
 		GpsCoordinate();
-		GpsCoordinate(double latitude, double longitude, int nbOfSatellites, double precision, double altitude, double speed, int date);
+		GpsCoordinate(double latitude, double longitude, int nbOfSatellites, double precision, double altitude, double speed, String date);
 };
 
 #endif
