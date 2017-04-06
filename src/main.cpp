@@ -20,7 +20,7 @@ void loop()
 {
     GpsCoordinate c = gps.getPosition();
 
-    Serial.println(c.getLatitude(), 6);
-    Serial.print(", ");
     Serial.print(c.getLongitude(), 6);
+    Serial.print(", ");
+    Serial.println(c.getLatitude(), 6);
 }
