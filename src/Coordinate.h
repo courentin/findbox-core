@@ -8,10 +8,10 @@ private:
 public:
     Coordinate(double latitude, double longitude) : latitude(latitude), longitude(longitude) {}
     /**
-     * This method return the distance in km
+     * This method return the distance in meters
      * between this and the argument.
      **/
-    double getDistance(const Coordinate*);
+    double getDistance(const Coordinate&);
     double getLatitude() { return latitude; }
     double getLongitude() { return longitude; }
 };

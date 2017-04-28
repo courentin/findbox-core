@@ -8,8 +8,13 @@ ConsoleIndicator::ConsoleIndicator(int baudrate)
 
 void ConsoleIndicator::showDistance(double distance)
 {
-    Serial.print(distance);
-    Serial.println(" km");
+    if (distance <= 0) {
+      Serial.print(distance/1000);
+      Serial.println(" km");
+    } else {
+      Serial.print(distance);
+      Serial.println(" m");
+    }
 }
 
 void ConsoleIndicator::hideDistance()

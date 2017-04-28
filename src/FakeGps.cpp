@@ -2,14 +2,13 @@
 #include "GpsCoordinate.h"
 #include "Arduino.h"
 
-FakeGps::FakeGps()
-{
+FakeGps::FakeGps() : latitude(50.280127), longitude(3.972047) {}
 
-}
+FakeGps::FakeGps(double latitude, double longitude) : latitude(latitude), longitude(longitude) {}
 
 GpsCoordinate FakeGps::getPosition()
 {
-    GpsCoordinate coordinate(50.280127, 3.972047, 8, 0.5, 0.1, 0, "2017-03-03 03:03:03");
+    GpsCoordinate coordinate(latitude, longitude, 8, 0.5, 0.1, 0, "2017-03-03 03:03:03");
     delay(2000);
     return coordinate;
 }

@@ -15,7 +15,7 @@ double rad2deg(double rad) {
   return (rad * 180 / pi);
 }
 
-double Coordinate::getDistance(const Coordinate* c)
+double Coordinate::getDistance(const Coordinate& c)
 {
-    return TinyGPSPlus::distanceBetween(this->latitude, this->longitude, c->latitude, c->longitude);
+    return TinyGPSPlus::distanceBetween(this->latitude, this->longitude, c.latitude, c.longitude);
 }

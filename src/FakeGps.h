@@ -7,8 +7,11 @@
 class FakeGps : public GpsInterface
 {
 	public:
-        FakeGps();
+		FakeGps();
+		FakeGps(double latitude, double longitude);
 		GpsCoordinate getPosition();
+	private:
+		double latitude, longitude;
 };
 
 #endif
