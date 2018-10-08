@@ -34,10 +34,10 @@ DateTime::DateTime() :
 }
 
 String DateTime::toString() {
-    // TODO: format numbers with leading zero
     // TODO: do not print time when no time is defined
-    String output = String(year)+"-" + String(month)+"-"+String(day)+" "+String(hour)+":"+String(minute)+":"+String(second);
-    return output;
+    char output[19];
+    sprintf(output, "%04d-%02d-%02d %02d:%02d:%02d", year, month, day, hour, minute, second);
+    return String(output);
 }
 
 DateTime::~DateTime()
