@@ -21,12 +21,11 @@ GpsCoordinate Gps::getPosition()
 			gps.encode(ss.read());
 		} while (millis() - start < 1000);
 
+		Serial.println(gps.satellites.value());
+
 		if (millis() > 5000 && gps.charsProcessed() < 10)
 		  Serial.println(F("No GPS data received: check wiring"));
 	}
-
-	char sz[32];
-    sprintf(sz, "%02d-%02d-%02d %02d:%02d:%02d", gps.date.year(), gps.date.month(), gps.date.day(), gps.time.hour(), gps.time.minute(), gps.time.second());
 
 	GpsCoordinate coordinate(
 		gps.location.lat(),
@@ -35,7 +34,7 @@ GpsCoordinate Gps::getPosition()
 		gps.hdop.value(),
 		gps.altitude.meters(),
 		gps.speed.kmph(),
-		sz);
+		DateTime(gps.date.year(), gps.date.month(), gps.date.day(), gps.time.hour(), gps.time.minute(), gps.time.second()));
 
     return coordinate;
 }

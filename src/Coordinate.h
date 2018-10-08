@@ -11,9 +11,10 @@ public:
      * This method return the distance in meters
      * between this and the argument.
      **/
-    double getDistance(const Coordinate&);
+    virtual double getDistance(const Coordinate&);
     double getLatitude() { return latitude; }
     double getLongitude() { return longitude; }
+    virtual ~Coordinate() {};
 };
 
 #endif

@@ -1,68 +1,62 @@
-#include <Gps.h>
-#include <FakeGps.h>
-#include <Coordinate.h>
-
-/*
-   This sample code demonstrates the normal use of a TinyGPS++ (TinyGPSPlus) object.
-   It requires the use of SoftwareSerial, and assumes that you have a
-   4800-baud serial GPS device hooked up on pins 4(rx) and 3(tx).
-*/
-static const int RXPin = 3, TXPin = 4;
-Coordinate secret(49.418392, 2.824809);
-
-// The serial connection to the GPS device
-GpsInterface* gps = new Gps(RXPin, TXPin);
-//GpsInterface* gps = new FakeGps(49.417691, 2.825509);
-
-int ledOrange = 5;
-int ledVerte  = 6;
-int ledRouge  = 7;
-int pushButton = 8;
+#include "Arduino.h"
+#include "Memory.h"
 
 void setup()
 {
-  pinMode(ledOrange, OUTPUT);
-  pinMode(ledVerte, OUTPUT);
-  pinMode(ledRouge, OUTPUT);
-  pinMode(pushButton, INPUT);
+  Serial.begin(9600);
+  Memory m;
+/*
+  bool discovered = m.isDiscovered();
+  Serial.print("Discovered : ");
+  Serial.println(discovered);
+  m.setDiscovered(!discovered);
 
-  Serial.begin(115200);
+  bool has = m.hasSecretCoordinate();
+  Serial.print("Has : ");
+  Serial.println(has);
+  m.setHasSecretCoordinate(!has);
+  m.setSecretCoordinate(UnaccurateCoordinate(49.418399, 2.824809, 10));
+  */
+  //m.clearCoordinates();
+
+  unsigned int nb = m.getNbDiscovered();
+  Serial.print("Nb : ");
+  Serial.println(nb);
+
+  UnaccurateCoordinate d = m.getSecretCoordinate();
+  Serial.println(d.getLatitude(), 6);
+  Serial.println(d.getLongitude(), 6);
+
+  if (nb == 0) {
+    GpsCoordinate c(49.418393, 2.824810, 7, 100, 0, 0, DateTime(2016, 12, 12, 3, 4, 1));
+    m.addCoordinate(c);
+    GpsCoordinate c1(49.418391, 2.824808, 6, 99, 0, 0, DateTime(2015, 11, 9, 2, 1, 5));
+    m.addCoordinate(c1);
+  } else {
+    GpsCoordinate* co = m.getDiscoveries();
+    Serial.print("Nb of disc : ");
+    Serial.println(nb);
+
+    for (unsigned int i = 0; i < nb; i++) {
+      Serial.print("nb[");
+      Serial.print(i);
+      Serial.print("] : ");
+      Serial.println(co[i].getLatitude(), 6);
+      Serial.println(co[i].getLongitude(), 6);
+      Serial.println(co[i].getDate().toString());
+    }
+
+/*
+    for (Memory::iterator i = m.begin(); i != m.end(); i++) {
+      Serial.print("EL : ");
+      const GpsCoordinate& c = *i;
+      Serial.println(c.getLatitude());
+    }
+*/
+  }
 }
-
-int pushed;
 
 void loop()
 {
-    digitalWrite(ledOrange, HIGH);
-    digitalWrite(ledVerte, HIGH);
-    digitalWrite(ledRouge, HIGH);
-    do {
-      pushed = digitalRead(pushButton);
-      if(pushed == HIGH) {
-        pushed = 0;
-      } else {
-        pushed = 1;
-      }
-    } while(!pushed);
 
-    digitalWrite(ledOrange, LOW);
-    GpsCoordinate current = gps->getPosition();
-
-    Serial.print(current.getLatitude(), 6);
-    Serial.print(", ");
-    Serial.println(current.getLongitude(), 6);
-
-    double dist = current.getDistance(secret);
-    digitalWrite(ledOrange, HIGH);
-    if (dist < 100) {
-      Serial.println("Succes ! Your at the secret position !");
-      digitalWrite(ledVerte, LOW);
-    } else {
-      Serial.print("Fail ! You'r ");
-      Serial.print(dist/1000);
-      Serial.println("km far from the secret position !");
-      digitalWrite(ledRouge, LOW);
-    }
-
-    delay(3000);
 }
