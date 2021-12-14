@@ -156,7 +156,8 @@ void lookForLocation()
     else
     {
         bool hasAccurateLocation = false;
-        while (!hasAccurateLocation && millis() < gpsTimeoutInSeconds * 1000)
+        bool isTimeout = false;
+        while (!hasAccurateLocation && !isTimeout)
         {
             display.showLoading();
             while (serial.available() > 0)
@@ -173,9 +174,11 @@ void lookForLocation()
                 while (true)
                     ;
             }
+
+            isTimeout = millis() > gpsTimeoutInSeconds * 1000;
         }
 
-        if (millis() >= gpsTimeoutInSeconds)
+        if (isTimeout)
         {
             display.showError(Error::GPS_TIMEOUT);
             while (true)
