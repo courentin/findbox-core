@@ -61,7 +61,7 @@ void Display::showDistance(double distanceInKm)
 {
     if (distanceInKm <= 9999)
     {
-        segments.print(distanceInKm);
+        segments.print(distanceInKm, 2);
         segments.blinkRate(HT16K33_BLINK_OFF);
         segments.writeDisplay();
     }
