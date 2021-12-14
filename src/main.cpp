@@ -183,8 +183,8 @@ void lookForLocation()
         }
 
         Coordinates currentLocation = {gps.location.lat(), gps.location.lng()};
-        double distance = TinyGPSPlus::distanceBetween(currentLocation.latitude, currentLocation.longitude, secretLocation.latitude, secretLocation.longitude) / 1000;
-        if (distance < errorMarginInMeters)
+        double distanceInMeters = TinyGPSPlus::distanceBetween(currentLocation.latitude, currentLocation.longitude, secretLocation.latitude, secretLocation.longitude) / 1000;
+        if (distanceInMeters < errorMarginInMeters)
         {
             display.showDistance(0);
             memory.setDiscovered();
@@ -192,7 +192,7 @@ void lookForLocation()
         }
         else
         {
-            display.showDistance(distance);
+            display.showDistance(distanceInMeters);
         }
     }
 }
