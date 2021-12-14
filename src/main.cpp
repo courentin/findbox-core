@@ -35,7 +35,7 @@ public:
     void showError(Error error);
     void showDistance(double distanceInKm);
     void clear();
-    void showLoading();
+    void showLoading(int delayBetweenStepsInMs);
     void setLowConsumptionMode();
     void setNormalMode();
 
@@ -79,10 +79,14 @@ void Display::clear()
     segments.writeDisplay();
 }
 
-void Display::showLoading()
+void Display::showLoading(int delayBetweenStepsInMs = 100)
 {
-    segments.print("LOAD");
-    segments.blinkRate(HT16K33_BLINK_1HZ);
+    uint8_t digitSteps[] = {0, 1, 3, 4, 4, 4, 4, 3, 1, 0, 0, 0};
+    uint8_t maskSteps[] = {B0000001, B0000001, B0000001, B0000001, B0000010, B0000100, B0001000, B0001000, B0001000, B0001000, B0010000, B0100000};
+    uint8_t currentStep = millis() / 100 % 12;
+
+    segments.clear();
+    segments.writeDigitRaw(digitSteps[currentStep], maskSteps[currentStep]);
     segments.writeDisplay();
 }
 
@@ -131,11 +135,13 @@ void openingSequence(int openDurationInSeconds)
 {
 }
 
-Display display = Display();
-Memory memory = Memory();
+Display display;
+Memory memory;
 
 void setup()
 {
+    display = Display();
+    memory = Memory();
     serial.begin(GPSBaud);
     display.showDistance(0);
 }
