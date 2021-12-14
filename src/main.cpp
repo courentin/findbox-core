@@ -148,29 +148,30 @@ void loop()
     }
     else
     {
-        while (serial.available() > 0)
+        bool hasAccurateLocation = false;
+        while (serial.available() > 0 && !hasAccurateLocation)
         {
             display.showLoading();
-            bool hasAccurateLocation =
+            hasAccurateLocation =
                 gps.encode(serial.read()) &&
                 gps.location.isValid() &&
                 gps.hdop.isValid() &&
                 gps.hdop.hdop() <= 10;
+        }
 
-            if (hasAccurateLocation)
+        if (hasAccurateLocation)
+        {
+            Coordinates currentLocation = {gps.location.lat(), gps.location.lng()};
+            double distance = TinyGPSPlus::distanceBetween(currentLocation.latitude, currentLocation.longitude, secretLocation.latitude, secretLocation.longitude) / 1000;
+            if (distance < errorMarginInMeters)
             {
-                Coordinates currentLocation = {gps.location.lat(), gps.location.lng()};
-                double distance = TinyGPSPlus::distanceBetween(currentLocation.latitude, currentLocation.longitude, secretLocation.latitude, secretLocation.longitude) / 1000;
-                if (distance < errorMarginInMeters)
-                {
-                    display.showDistance(0);
-                    memory.setDiscovered();
-                    openingSequence(20);
-                }
-                else
-                {
-                    display.showDistance(distance);
-                }
+                display.showDistance(0);
+                memory.setDiscovered();
+                openingSequence(20);
+            }
+            else
+            {
+                display.showDistance(distance);
             }
         }
 
