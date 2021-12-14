@@ -8,7 +8,7 @@
 static const int RXPin = PA10, TXPin = PA9;
 static const uint32_t GPSBaud = 9600;
 static const int errorMarginInMeters = 300;
-static const int gpsTimeoutInSeconds = 60 * 10;
+static const int gpsTimeoutInSeconds = 10 * 60;
 
 struct Coordinates
 {
@@ -149,54 +149,45 @@ Memory memory;
 
 void lookForLocation()
 {
-    if (memory.isDiscovered())
+    bool hasAccurateLocation = false;
+    bool isTimeout = false;
+    while (!hasAccurateLocation && !isTimeout)
     {
-        openingSequence(7);
+        display.showLoading();
+        while (serial.available() > 0)
+        {
+            hasAccurateLocation =
+                gps.encode(serial.read()) &&
+                gps.location.isValid() &&
+                gps.hdop.isValid() &&
+                gps.hdop.hdop() <= 10;
+        }
+        if (millis() > 5000 && gps.charsProcessed() < 10)
+        {
+            display.showError(Error::GPS_NOT_FOUND);
+            return;
+        }
+
+        isTimeout = millis() > gpsTimeoutInSeconds * 1000;
+    }
+
+    if (isTimeout)
+    {
+        display.showError(Error::GPS_TIMEOUT);
+        return;
+    }
+
+    Coordinates currentLocation = {gps.location.lat(), gps.location.lng()};
+    double distanceInMeters = TinyGPSPlus::distanceBetween(currentLocation.latitude, currentLocation.longitude, secretLocation.latitude, secretLocation.longitude) / 1000;
+    if (distanceInMeters < errorMarginInMeters)
+    {
+        display.showDistance(0);
+        memory.setDiscovered();
+        openingSequence(20);
     }
     else
     {
-        bool hasAccurateLocation = false;
-        bool isTimeout = false;
-        while (!hasAccurateLocation && !isTimeout)
-        {
-            display.showLoading();
-            while (serial.available() > 0)
-            {
-                hasAccurateLocation =
-                    gps.encode(serial.read()) &&
-                    gps.location.isValid() &&
-                    gps.hdop.isValid() &&
-                    gps.hdop.hdop() <= 10;
-            }
-            if (millis() > 5000 && gps.charsProcessed() < 10)
-            {
-                display.showError(Error::GPS_NOT_FOUND);
-                while (true)
-                    ;
-            }
-
-            isTimeout = millis() > gpsTimeoutInSeconds * 1000;
-        }
-
-        if (isTimeout)
-        {
-            display.showError(Error::GPS_TIMEOUT);
-            while (true)
-                ;
-        }
-
-        Coordinates currentLocation = {gps.location.lat(), gps.location.lng()};
-        double distanceInMeters = TinyGPSPlus::distanceBetween(currentLocation.latitude, currentLocation.longitude, secretLocation.latitude, secretLocation.longitude) / 1000;
-        if (distanceInMeters < errorMarginInMeters)
-        {
-            display.showDistance(0);
-            memory.setDiscovered();
-            openingSequence(20);
-        }
-        else
-        {
-            display.showDistance(distanceInMeters);
-        }
+        display.showDistance(distanceInMeters);
     }
 }
 
@@ -207,13 +198,11 @@ void setup()
     serial.begin(GPSBaud);
 
     if (memory.isDiscovered())
-    {
         openingSequence(7);
-    }
+
     else
-    {
         lookForLocation();
-    }
+
     delay(18000);
     display.setLowConsumptionMode();
 }
