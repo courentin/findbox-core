@@ -32,7 +32,7 @@ class Display
 public:
     void init(uint8_t addr);
     void showError(Error error);
-    void showDistance(double distanceInKm);
+    void showDistance(double distanceInMeters);
     void clear();
     void showLoading(int delayBetweenStepsInMs);
     void setLowConsumptionMode();
@@ -57,8 +57,9 @@ void Display::showError(Error error)
     segments.writeDisplay();
 }
 
-void Display::showDistance(double distanceInKm)
+void Display::showDistance(double distanceInMeters)
 {
+    double distanceInKm = distanceInMeters / 1000;
     if (distanceInKm <= 9999)
     {
         segments.print(distanceInKm, 2);
@@ -161,7 +162,7 @@ Display display = Display();
 Memory memory = Memory();
 Locker locker = Locker();
 
-void lookForLocation()
+void lookForLocation(int gpsTimeoutInSeconds)
 {
     bool hasAccurateLocation = false;
     bool isTimeout = false;
@@ -192,8 +193,8 @@ void lookForLocation()
     }
 
     Coordinates currentLocation = {gps.location.lat(), gps.location.lng()};
-    double distanceInKm = TinyGPSPlus::distanceBetween(currentLocation.latitude, currentLocation.longitude, secretLocation.latitude, secretLocation.longitude) / 1000;
-    if (distanceInKm < discoveringRadiusInMeters)
+    double distanceInMeters = TinyGPSPlus::distanceBetween(currentLocation.latitude, currentLocation.longitude, secretLocation.latitude, secretLocation.longitude);
+    if (distanceInMeters < discoveringRadiusInMeters)
     {
         display.showDistance(0);
         memory.setDiscovered();
@@ -201,7 +202,7 @@ void lookForLocation()
     }
     else
     {
-        display.showDistance(distanceInKm);
+        display.showDistance(distanceInMeters);
     }
 }
 
@@ -215,7 +216,7 @@ void setup()
         locker.openingSequence(7);
 
     else
-        lookForLocation();
+        lookForLocation(gpsTimeoutInSeconds);
 
     delay(18000);
     display.setLowConsumptionMode();
