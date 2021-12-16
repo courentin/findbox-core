@@ -6,8 +6,9 @@
 #include <FlashStorage_STM32.h>
 
 static const int RXPin = PA10, TXPin = PA9;
+static const int lockerPin = PB3;
 static const uint32_t GPSBaud = 9600;
-static const int errorMarginInMeters = 300;
+static const int discoveringRadiusInMeters = 300;
 static const int gpsTimeoutInSeconds = 10 * 60;
 
 struct Coordinates
@@ -17,11 +18,7 @@ struct Coordinates
 };
 
 Coordinates secretLocation = {48.891416333, 2.3924458330};
-
-// The TinyGPS++ object
 TinyGPSPlus gps;
-
-// The serial connection to the GPS device
 SoftwareSerial serial(RXPin, TXPin);
 
 enum class Error
@@ -33,7 +30,7 @@ enum class Error
 class Display
 {
 public:
-    Display(uint8_t addr);
+    void init(uint8_t addr);
     void showError(Error error);
     void showDistance(double distanceInKm);
     void clear();
@@ -45,8 +42,9 @@ private:
     Adafruit_7segment segments;
 };
 
-Display::Display(uint8_t addr = 0x70) : segments()
+void Display::init(uint8_t addr = 0x70)
 {
+    this->segments = Adafruit_7segment();
     segments.begin(addr);
 }
 
@@ -107,7 +105,6 @@ void Display::setNormalMode()
 class Memory
 {
 public:
-    Memory();
     bool isDiscovered();
     void setDiscovered();
     void setUndiscovered();
@@ -115,10 +112,6 @@ public:
 private:
     uint16_t is_discovered_address = 0;
 };
-
-Memory::Memory()
-{
-}
 
 bool Memory::isDiscovered()
 {
@@ -140,12 +133,33 @@ void Memory::setUndiscovered()
     EEPROM.commit();
 }
 
-void openingSequence(int openDurationInSeconds)
+class Locker
 {
+public:
+    void init(int pin);
+    void openingSequence(int openDurationInSeconds);
+
+private:
+    int pin;
+};
+
+void Locker::init(int pin)
+{
+    this->pin = pin;
+    pinMode(pin, OUTPUT);
+    digitalWrite(pin, LOW);
 }
 
-Display display;
-Memory memory;
+void Locker::openingSequence(int openDurationInSeconds)
+{
+    digitalWrite(pin, HIGH);
+    delay(openDurationInSeconds * 1000);
+    digitalWrite(pin, LOW);
+}
+
+Display display = Display();
+Memory memory = Memory();
+Locker locker = Locker();
 
 void lookForLocation()
 {
@@ -179,11 +193,11 @@ void lookForLocation()
 
     Coordinates currentLocation = {gps.location.lat(), gps.location.lng()};
     double distanceInKm = TinyGPSPlus::distanceBetween(currentLocation.latitude, currentLocation.longitude, secretLocation.latitude, secretLocation.longitude) / 1000;
-    if (distanceInKm < errorMarginInMeters)
+    if (distanceInKm < discoveringRadiusInMeters)
     {
         display.showDistance(0);
         memory.setDiscovered();
-        openingSequence(20);
+        locker.openingSequence(20);
     }
     else
     {
@@ -193,12 +207,12 @@ void lookForLocation()
 
 void setup()
 {
-    display = Display();
-    memory = Memory();
+    display.init();
+    locker.init(lockerPin);
     serial.begin(GPSBaud);
 
     if (memory.isDiscovered())
-        openingSequence(7);
+        locker.openingSequence(7);
 
     else
         lookForLocation();
