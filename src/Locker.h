@@ -9,8 +9,8 @@ public:
     void init(int pin)
     {
         this->pin = pin;
-        pinMode(pin, OUTPUT);
         digitalWrite(pin, LOW);
+        pinMode(pin, OUTPUT);
     }
 
     void openingSequence(int openDurationInSeconds)

@@ -6,7 +6,7 @@
 #include "Locker.h"
 
 static const int RXPin = PA10, TXPin = PA9;
-static const int lockerPin = PB3;
+static const int lockerPin = PA3;
 static const uint32_t GPSBaud = 9600;
 static const int discoveringRadiusInMeters = 300;
 static const int gpsTimeoutInSeconds = 10 * 60;
@@ -65,8 +65,8 @@ void lookForLocation(int gpsTimeoutInSeconds)
 
 void setup()
 {
+    locker.init(lockerPin); // Needs to be done first to avoid unlocking in the meantime
     display.init();
-    locker.init(lockerPin);
     serial.begin(GPSBaud);
 
     if (memory.isDiscovered())
