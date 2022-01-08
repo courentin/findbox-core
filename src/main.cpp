@@ -5,7 +5,7 @@
 #include "Memory.h"
 #include "Locker.h"
 
-static const int RXPin = PA10, TXPin = PA9;
+static const int RXPin = PB11, TXPin = PB10;
 static const int lockerPin = PA3;
 static const uint32_t GPSBaud = 9600;
 static const int discoveringRadiusInMeters = 300;
