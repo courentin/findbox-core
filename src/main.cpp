@@ -1,3 +1,5 @@
+#include "config.h"
+
 #include <TinyGPS++.h>
 #include <SoftwareSerial.h>
 #include "findbox_types.h"
@@ -5,15 +7,10 @@
 #include "Memory.h"
 #include "Locker.h"
 
-static const int RXPin = PB11, TXPin = PB10;
-static const int lockerPin = PA3;
-static const uint32_t GPSBaud = 9600;
-static const int discoveringRadiusInMeters = 300;
-static const int gpsTimeoutInSeconds = 10 * 60;
 
-Coordinates secretLocation = {48.891416333, 2.3924458330};
+Coordinates secretLocation = {48.8907321, 2.3422532};
 TinyGPSPlus gps;
-SoftwareSerial serial(RXPin, TXPin);
+SoftwareSerial serial(RX_PIN, TX_PIN);
 
 Display display = Display();
 Memory memory = Memory();
@@ -65,9 +62,10 @@ void lookForLocation(int gpsTimeoutInSeconds)
 
 void setup()
 {
-    locker.init(lockerPin); // Needs to be done first to avoid unlocking in the meantime
+    locker.init(LOCKER_PIN); // Needs to be done first to avoid unlocking in the meantime
     display.init();
     serial.begin(GPSBaud);
+    memory.setUndiscovered();
 
     if (memory.isDiscovered())
         locker.openingSequence(7);
