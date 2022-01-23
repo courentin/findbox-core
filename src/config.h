@@ -16,6 +16,7 @@ static const int gpsTimeoutInSeconds = 10 * 60;
 
 #if BOARD_CONFIG == BOARD_BENOIT
     #define LOCKER_PIN PA5
+    #define I2C_PULL_UP_PIN PA2
 #elif BOARD_CONFIG == BOARD_CORENTIN
     #define LOCKER_PIN PA3
 #else

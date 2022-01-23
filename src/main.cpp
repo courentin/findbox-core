@@ -63,6 +63,12 @@ void lookForLocation(int gpsTimeoutInSeconds)
 void setup()
 {
     locker.init(LOCKER_PIN); // Needs to be done first to avoid unlocking in the meantime
+    
+    #ifdef I2C_PULL_UP_PIN
+        digitalWrite(I2C_PULL_UP_PIN, HIGH);
+        pinMode(I2C_PULL_UP_PIN, OUTPUT);
+    #endif
+
     display.init();
     serial.begin(GPSBaud);
     memory.setUndiscovered();
