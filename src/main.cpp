@@ -75,11 +75,14 @@ void setup()
     serial.begin(GPSBaud);
     memory.setUndiscovered();
 
-    if (memory.isDiscovered())
+    if (memory.isDiscovered()) {
+        display.showOpen();
+        display.enableBlinking();
         locker.openingSequence(7);
-
-    else
+        display.disableBlinking();
+    } else {
         lookForLocation(gpsTimeoutInSeconds);
+    }
 
     delay(18000);
     display.setLowConsumptionMode();

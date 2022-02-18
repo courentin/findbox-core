@@ -59,6 +59,18 @@ public:
         segments.writeDisplay();
     }
 
+    void showOpen()
+    {
+        segments.clear();
+
+        segments.writeDigitRaw(0, B0111001);
+        segments.writeDigitRaw(1, B0001001);
+        segments.writeDigitRaw(3, B0001001);
+        segments.writeDigitRaw(4, B0001111);
+
+        segments.writeDisplay();
+    }
+
     void showLoading(int delayBetweenStepsInMs = 100)
     {
         uint8_t digitSteps[] = {0, 1, 3, 4, 4, 4, 4, 3, 1, 0, 0, 0};
