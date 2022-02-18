@@ -30,15 +30,27 @@ public:
         if (distanceInKm <= 9999)
         {
             segments.print(distanceInKm, 2);
-            segments.blinkRate(HT16K33_BLINK_OFF);
+            this->disableBlinking();
             segments.writeDisplay();
         }
         else
         {
             segments.print(9999);
-            segments.blinkRate(HT16K33_BLINK_1HZ);
+            this->enableBlinking();
             segments.writeDisplay();
         }
+    }
+
+    void enableBlinking()
+    {
+        segments.blinkRate(HT16K33_BLINK_1HZ);
+        segments.writeDisplay();
+    }
+
+    void disableBlinking()
+    {
+        segments.blinkRate(HT16K33_BLINK_OFF);
+        segments.writeDisplay();
     }
 
     void clear()

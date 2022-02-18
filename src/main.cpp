@@ -51,8 +51,10 @@ void lookForLocation(int gpsTimeoutInSeconds)
     if (distanceInMeters < discoveringRadiusInMeters)
     {
         display.showDistance(0);
+        display.enableBlinking();
         memory.setDiscovered();
         locker.openingSequence(20);
+        display.disableBlinking();
     }
     else
     {
