@@ -2,6 +2,7 @@
 #define BOARD_CORENTIN 2
 
 #include <Arduino.h>
+#include "findbox_types.h"
 
 static const uint32_t GPSBaud = 9600;
 static const int discoveringRadiusInMeters = 50;
@@ -17,8 +18,10 @@ static const int gpsTimeoutInSeconds = 10 * 60;
 #if BOARD_CONFIG == BOARD_BENOIT
     #define LOCKER_PIN PA5
     #define I2C_PULL_UP_PIN PA2
+    Coordinates secretLocation = {48.858075, 2.348579};
 #elif BOARD_CONFIG == BOARD_CORENTIN
     #define LOCKER_PIN PA3
+    Coordinates secretLocation = {48.8907321, 2.3422532};
 #else
 #error The value of BOARD_CONFIG is not recognized
 #endif

@@ -8,7 +8,6 @@
 #include "Locker.h"
 
 
-Coordinates secretLocation = {48.8907321, 2.3422532};
 TinyGPSPlus gps;
 SoftwareSerial serial(RX_PIN, TX_PIN);
 
