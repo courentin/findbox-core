@@ -33,7 +33,7 @@ void lookForLocation(int gpsTimeoutInSeconds)
         }
         if (millis() > 5000 && gps.charsProcessed() < 10)
         {
-            display.showError(Error::GPS_NOT_FOUND);
+            display.showError();
             return;
         }
 
@@ -42,7 +42,7 @@ void lookForLocation(int gpsTimeoutInSeconds)
 
     if (isTimeout)
     {
-        display.showError(Error::GPS_TIMEOUT);
+        display.showError();
         return;
     }
 

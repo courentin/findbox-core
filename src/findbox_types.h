@@ -7,10 +7,4 @@ struct Coordinates
     double longitude;
 };
 
-enum class Error
-{
-    GPS_NOT_FOUND = 1,
-    GPS_TIMEOUT = 2,
-};
-
 #endif

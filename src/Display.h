@@ -15,12 +15,10 @@ public:
         segments.begin(addr);
     }
 
-    void showError(Error error)
+    void showError()
     {
-        char errorCode[4];
-        sprintf(errorCode, "E%03d", error);
-        segments.print(errorCode);
-        segments.blinkRate(HT16K33_BLINK_OFF);
+        segments.print("Err.");
+        this->disableBlinking();
         segments.writeDisplay();
     }
 
