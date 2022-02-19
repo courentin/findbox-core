@@ -4,7 +4,7 @@
 #include <Arduino.h>
 
 static const uint32_t GPSBaud = 9600;
-static const int discoveringRadiusInMeters = 300;
+static const int discoveringRadiusInMeters = 50;
 static const int gpsTimeoutInSeconds = 10 * 60;
 
 #define RX_PIN PB11
